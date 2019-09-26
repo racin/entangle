@@ -155,7 +155,7 @@ func NewLattice(alpha, s, p int, confpath string, datarequest chan *DownloadRequ
 		P:                 p,
 		confpath:          confpath,
 		DataStream:        make(chan *Block, len(conf)*5),
-		MaxChunkSize:      3900,
+		MaxChunkSize:      MaxSizeChunk,
 		DataRequest:       datarequest,
 		//Config:   conf,
 	}
