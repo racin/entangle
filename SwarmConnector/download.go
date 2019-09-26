@@ -1,10 +1,10 @@
-package SwarmConnector
+package swarmconnector
 
 //import requiered libraries
 import (
 	"encoding/json"
 	"fmt"
-	e "github.com/racin/HackathonMadrid_Entanglement/Code/Entangler"
+	e "github.com/racin/entangle/entangler"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -43,7 +43,7 @@ func NewDownloadPool(capacity int, endpoint string) *DownloadPool {
 	d := &DownloadPool{
 		resource:     make(chan *Downloader, capacity),
 		Datarequests: make(chan *e.DownloadRequest),
-		//lattice:  data.NewLattice(Entangler.Alpha, Entangler.S, Entangler.P),
+		//lattice:  data.NewLattice(entangler.Alpha, entangler.S, entangler.P),
 		Capacity: capacity,
 		count:    0,
 		//Filepath: filepath,
@@ -381,10 +381,10 @@ func DownloadAndReconstruct(filePath string, dataIndexes ...bool) (string, error
 			}
 
 			//Create Result file
-			//_, err = os.Create(Entangler.DownloadDirectory + "d" + strconv.Itoa(i))
+			//_, err = os.Create(entangler.DownloadDirectory + "d" + strconv.Itoa(i))
 
 			//Write XOR content to file
-			//ioutil.WriteFile(Entangler.DownloadDirectory+"d"+strconv.Itoa(i), Result, 0644)
+			//ioutil.WriteFile(entangler.DownloadDirectory+"d"+strconv.Itoa(i), Result, 0644)
 			continue
 		}
 		fmt.Print("NOT Missing: " + strconv.Itoa(i) + "\n")
@@ -410,8 +410,8 @@ func DownloadAndReconstruct(filePath string, dataIndexes ...bool) (string, error
 
 // func Download() {
 
-// 	br, _, _ := Entangler.GetBackwardNeighbours(index)
-// 	fr, _, _ := Entangler.GetForwardNeighbours(index)
+// 	br, _, _ := entangler.GetBackwardNeighbours(index)
+// 	fr, _, _ := entangler.GetForwardNeighbours(index)
 
 // 	//Getting filenames to XOR
 // 	values1 := []string{"p", strconv.Itoa(br), "_", strconv.Itoa(index)}
@@ -446,7 +446,7 @@ func DownloadAndReconstruct(filePath string, dataIndexes ...bool) (string, error
 // 	//fmt.Println(err) // hello world
 
 // 	//XOR PARITY CHUNKS
-// 	Result, _ := Entangler.XORByteSlice(contentA, contentB)
+// 	Result, _ := entangler.XORByteSlice(contentA, contentB)
 // 	//Create Result file
 // 	//DataFile, err = os.Create("files/Result.txt")
 

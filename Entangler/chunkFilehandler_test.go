@@ -1,4 +1,4 @@
-package Entangler
+package entangler
 
 import (
 	"os"

@@ -1,4 +1,4 @@
-package Entangler
+package entangler
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-const MaxSizeChunk int = 3900
+const MaxSizeChunk int = 4096
 
 // s Horizontal strands. p Helical strands
 type Lattice struct {
@@ -137,12 +137,12 @@ func NewLattice(alpha, s, p int, confpath string, datarequest chan *DownloadRequ
 	//datablocks := make(map[string]*Block, len(dataKeys))
 	//datablocks := make([]*Block, len(dataKeys))
 
-	blocks = createDataBlocks(conf, dataKeys, blocks, alpha, 15)
+	blocks = createDataBlocks(conf, dataKeys, blocks, alpha, 5)
 	//copy(datablocks, blocks) // Blocks should be sorted already.
 
-	blocks = createParities(conf, hpKeys, blocks, Horizontal, 15)
-	blocks = createParities(conf, rpKeys, blocks, Right, 15)
-	blocks = createParities(conf, lpKeys, blocks, Left, 15)
+	blocks = createParities(conf, hpKeys, blocks, Horizontal, 5)
+	blocks = createParities(conf, rpKeys, blocks, Right, 5)
+	blocks = createParities(conf, lpKeys, blocks, Left, 5)
 
 	return &Lattice{
 		// DataNodes:   make([]*DataBlock, esize),

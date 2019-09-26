@@ -1,4 +1,4 @@
-package Entangler
+package entangler
 
 import (
 	"crypto/sha256"
@@ -76,7 +76,7 @@ func TestEntangleFile(t *testing.T) {
 
 }
 
-func TestEntangler(t *testing.T) {
+func Testentangler(t *testing.T) {
 	// check hash of data block
 	data, _ := ReadChunk("../../testing/d8")
 	p1, _ := ReadChunk("../../testing/p4_8")

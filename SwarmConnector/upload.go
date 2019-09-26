@@ -1,4 +1,4 @@
-package SwarmConnector
+package swarmconnector
 
 //import requiered libraries
 import (

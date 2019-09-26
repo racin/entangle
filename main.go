@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	bzzclient "github.com/ethereum/go-ethereum/swarm/api/client"
-	"github.com/racin/HackathonMadrid_Entanglement/Code/Entangler"
-	"github.com/racin/HackathonMadrid_Entanglement/Code/SwarmConnector"
+	"github.com/racin/entangle/entangler"
+	"github.com/racin/entangle/swarmconnector"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -33,19 +33,19 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-	if _, err := os.Create(Entangler.TempDirectory + handler.Filename); err == nil {
+	if _, err := os.Create(entangler.TempDirectory + handler.Filename); err == nil {
 
 	} else {
 		fmt.Println("Fatal error ... " + err.Error())
 		os.Exit(1)
 	}
-	ioutil.WriteFile(Entangler.TempDirectory+handler.Filename, fileBytes, os.ModeAppend)
+	ioutil.WriteFile(entangler.TempDirectory+handler.Filename, fileBytes, os.ModeAppend)
 
-	// Chunker & Entangler
-	Entangler.EntangleFile(Entangler.TempDirectory + handler.Filename)
+	// Chunker & entangler
+	entangler.EntangleFile(entangler.TempDirectory + handler.Filename)
 
 	// Upload
-	SwarmConnector.UploadAllChunks()
+	swarmconnector.UploadAllChunks()
 
 	allFile, _ := ioutil.ReadFile("../retrives.txt")
 	fmt.Fprintf(w, string(allFile))
@@ -83,9 +83,9 @@ func downloadFile(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	SwarmConnector.DownloadAndReconstruct(Entangler.ChunkDirectory+"reconstruct_swarm_logo.jpeg", boolArr...)
+	swarmconnector.DownloadAndReconstruct(entangler.ChunkDirectory+"reconstruct_swarm_logo.jpeg", boolArr...)
 
-	bytes, _ := ioutil.ReadFile(Entangler.ChunkDirectory + "reconstruct_swarm_logo.jpeg")
+	bytes, _ := ioutil.ReadFile(entangler.ChunkDirectory + "reconstruct_swarm_logo.jpeg")
 	/*if err := jpeg.Encode(buffer, *img, nil); err != nil {
 		log.Println("unable to encode image.")
 	}*/
@@ -107,9 +107,9 @@ func setupRoutes() {
 }
 
 func main() {
-	dp := SwarmConnector.NewDownloadPool(100, "https://swarm-gateways.net")
+	dp := swarmconnector.NewDownloadPool(100, "https://swarm-gateways.net")
 	t := time.Now().UnixNano()
-	err := dp.DownloadFile("../retrives.txt", "../files/main_"+fmt.Sprintf("%d", t)+".jpeg")
+	err := dp.DownloadFile("retrives.txt", "files/main_"+fmt.Sprintf("%d", t)+".jpeg")
 	fmt.Println("Downloaded file")
 	if err != nil {
 		fmt.Println(err.Error())
@@ -129,7 +129,7 @@ func downloadSingleFile(identifier string) {
 	if file, err := client.Download(identifier, ""); err == nil {
 		if contentA, err := ioutil.ReadAll(file); err == nil {
 
-			f, err := os.Create(Entangler.DownloadDirectory + "main_" + fmt.Sprintf("%d", t) + ".jpeg")
+			f, err := os.Create(entangler.DownloadDirectory + "main_" + fmt.Sprintf("%d", t) + ".jpeg")
 			if err != nil {
 				fmt.Println(err.Error())
 			}
@@ -146,7 +146,7 @@ func downloadSingleFile(identifier string) {
 
 func uploadLarge() {
 	// Upload
-	SwarmConnector.UploadAllChunks()
+	swarmconnector.UploadAllChunks()
 }
 
 func upload(filepath string, filename string) {
@@ -157,17 +157,17 @@ func upload(filepath string, filename string) {
 		fmt.Println(err)
 	}
 
-	if _, err := os.Create(Entangler.TempDirectory + filename); err == nil {
+	if _, err := os.Create(entangler.TempDirectory + filename); err == nil {
 
 	} else {
 		fmt.Println("Fatal error ... " + err.Error())
 		os.Exit(1)
 	}
-	ioutil.WriteFile(Entangler.TempDirectory+filename, fileBytes, os.ModeAppend)
+	ioutil.WriteFile(entangler.TempDirectory+filename, fileBytes, os.ModeAppend)
 
-	// Chunker & Entangler
-	Entangler.EntangleFile(Entangler.TempDirectory + filename)
+	// Chunker & entangler
+	entangler.EntangleFile(entangler.TempDirectory + filename)
 
 	// Upload
-	SwarmConnector.UploadAllChunks()
+	swarmconnector.UploadAllChunks()
 }
