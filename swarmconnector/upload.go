@@ -15,13 +15,13 @@ import (
 
 type FileStructure map[string]string
 
-const UploadDirectory = "../files/"
+const UploadDirectory = "files/"
 
 func UploadAllChunks() {
 	//define Swarm client
 	//Create file retrieval log info
 
-	newFile, err = os.Create("../retrives.txt")
+	newFile, err = os.Create("retrives.txt")
 	//Read directory
 
 	files, err := ioutil.ReadDir(UploadDirectory)
@@ -41,7 +41,7 @@ func UploadAllChunks() {
 
 		fs[filepath.Base(file.Name())] = manifestHash
 		byteArr, _ := json.Marshal(fs)
-		ioutil.WriteFile("../retrives.txt", byteArr, 0644)
+		ioutil.WriteFile("retrives.txt", byteArr, 0644)
 	}
 
 }
@@ -50,7 +50,7 @@ func UploadLargeFile() {
 	//define Swarm client
 	//Create file retrieval log info
 
-	newFile, err = os.Create("../retrives.txt")
+	newFile, err = os.Create("retrives.txt")
 	//Read directory
 
 	files, err := ioutil.ReadDir(UploadDirectory)
@@ -70,7 +70,7 @@ func UploadLargeFile() {
 
 		fs[filepath.Base(file.Name())] = manifestHash
 		byteArr, _ := json.Marshal(fs)
-		ioutil.WriteFile("../retrives.txt", byteArr, 0644)
+		ioutil.WriteFile("retrives.txt", byteArr, 0644)
 	}
 
 }

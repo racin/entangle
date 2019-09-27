@@ -10,10 +10,10 @@ import (
 )
 
 const MaxChunkSize float64 = 4096 //3900
-const ChunkDirectory string = "../files/"
-const TestingDirectory string = "../testing/"
-const TempDirectory string = "../temp/"
-const DownloadDirectory string = "../download/"
+const ChunkDirectory string = "files/"
+const TestingDirectory string = "testing/"
+const TempDirectory string = "temp/"
+const DownloadDirectory string = "download/"
 
 // Chunks the file. Sends back how many chunks it made
 func ChunkFile(file *os.File) (int, error) {

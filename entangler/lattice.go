@@ -75,6 +75,7 @@ func createParities(conf map[string]string,
 		leftright := strings.Split(position, "_")
 		left, _ := strconv.Atoi(leftright[0])
 		right, _ := strconv.Atoi(leftright[1])
+
 		rnd := rand.Intn(100)
 		var unavail bool
 		if rnd < unAvailablePct {
@@ -236,7 +237,7 @@ func GetForwardNeighbours(index, S, P int) (r, h, l int) {
 	// 1 -> Top, 0 -> Bottom, else Center
 	var nodePos = index % S
 
-	if nodePos == 1 {
+	if nodePos == 1 || nodePos == -4 {
 		r = index + S + 1
 		h = index + S
 		l = index + (S * P) - int(math.Pow(float64(S-1), 2))
@@ -258,7 +259,7 @@ func GetBackwardNeighbours(index, S, P int) (r, h, l int) {
 	// 1 -> Top, 0 -> Bottom, else Center
 	var nodePos = index % S
 
-	if nodePos == 1 {
+	if nodePos == 1 || nodePos == -4 {
 		r = index - (S * P) + int((math.Pow(float64(S), 2) - 1))
 		h = index - S
 		l = index - (S - 1)
