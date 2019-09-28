@@ -226,6 +226,15 @@ type Block struct {
 	DownloadStatus int
 	WasDownloaded  bool
 	IsUnavailable  bool
+	StartTime      int64
+	EndTime        int64
+}
+
+func (b *Block) SetData(data []byte, start, end int64, wasDownload bool) {
+	b.Data = data
+	b.StartTime = start
+	b.EndTime = end
+	b.WasDownloaded = wasDownload
 }
 
 type StrandClass int

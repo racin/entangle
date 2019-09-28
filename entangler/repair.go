@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	//"time"
+	"time"
 )
 
 func (l *Lattice) RebuildFile(filePath string) error {
@@ -48,7 +48,7 @@ func DebugPrint(format string, a ...interface{}) (int, error) {
 	if ok && z == "" {
 		return 0, nil
 	}
-	if false {
+	if true {
 		return fmt.Printf(format, a...)
 	}
 	return 0, nil
@@ -99,7 +99,8 @@ func (l *Lattice) HierarchicalRepair(block *Block, result chan *Block, path []*B
 				l.HierarchicalRepair(block.Left[i], nil, append(path, block))
 			} else if block.Right[i].HasData() {
 				// First data is equal to first parity (yet...)
-				block.Data = block.Right[i].Data
+				//block.Data = block.Right[i].Data
+				block.SetData(block.Right[i].Data, time.Now().UnixNano(), time.Now().UnixNano(), false)
 				if result != nil {
 					result <- block
 				}
@@ -203,6 +204,7 @@ func (l *Lattice) HierarchicalRepair(block *Block, result chan *Block, path []*B
 func (l *Lattice) XORBlocks(a *Block, b *Block) (*Block, error) {
 
 	var err error
+	var bytedata []byte
 	// Case 1: Both is data (Invalid case)
 	if !a.IsParity && !b.IsParity {
 		return nil, errors.New("at least one block must be parity")
@@ -211,10 +213,12 @@ func (l *Lattice) XORBlocks(a *Block, b *Block) (*Block, error) {
 	// Case 2: Both are Parity
 	if a.IsParity && b.IsParity {
 		if a.Right[0] == b.Left[0] {
-			a.Right[0].Data, err = XORByteSlice(a.Data, b.Data)
+			bytedata, err = XORByteSlice(a.Data, b.Data)
+			a.Right[0].SetData(bytedata, time.Now().UnixNano(), time.Now().UnixNano(), false)
 			return a.Right[0], err
 		} else if a.Left[0] == b.Right[0] {
-			a.Left[0].Data, err = XORByteSlice(a.Data, b.Data)
+			bytedata, err = XORByteSlice(a.Data, b.Data)
+			a.Left[0].SetData(bytedata, time.Now().UnixNano(), time.Now().UnixNano(), false)
 			return a.Left[0], err
 		} else {
 			return nil, errors.New("blocks are not connected")
@@ -230,10 +234,12 @@ func (l *Lattice) XORBlocks(a *Block, b *Block) (*Block, error) {
 	}
 
 	if len(data.Right) > int(parity.Class) && data.Right[parity.Class] == parity { // Reconstruct left parity
-		data.Left[parity.Class].Data, err = XORByteSlice(data.Data, parity.Data)
+		bytedata, err = XORByteSlice(data.Data, parity.Data)
+		data.Left[parity.Class].SetData(bytedata, time.Now().UnixNano(), time.Now().UnixNano(), false)
 		return data.Left[parity.Class], err
 	} else if len(data.Left) > int(parity.Class) && data.Left[parity.Class] == parity { // Reconstruct right parity
-		data.Right[parity.Class].Data, err = XORByteSlice(data.Data, parity.Data)
+		bytedata, err = XORByteSlice(data.Data, parity.Data)
+		data.Right[parity.Class].SetData(bytedata, time.Now().UnixNano(), time.Now().UnixNano(), false)
 		return data.Right[parity.Class], err
 	} else {
 		return nil, errors.New("blocks are not connected")

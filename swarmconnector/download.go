@@ -126,8 +126,7 @@ func (p *DownloadPool) DownloadBlock(block *e.Block, result chan *e.Block) {
 				e.DebugPrint("Completed download of block. %v\n", block.String())
 
 				// Use Result if we get it.
-				block.WasDownloaded = true
-				block.Data = contentA
+				block.SetData(contentA, start, time.Now().UnixNano(), true)
 				content <- contentA
 				p.lattice.DataStream <- block
 
@@ -138,8 +137,6 @@ func (p *DownloadPool) DownloadBlock(block *e.Block, result chan *e.Block) {
 
 		p.release(dl)
 		block.DownloadStatus = 0
-		fmt.Printf("%t,%d,%d,%d,%t,%d,%d\n", block.IsParity, block.Position, block.LeftPos(0), block.RightPos(0), block.HasData(), start, time.Now().UnixNano())
-		//result <- block
 
 		// Dont use result
 		//content <- contentA
@@ -157,7 +154,7 @@ func (p *DownloadPool) DownloadBlock(block *e.Block, result chan *e.Block) {
 }
 func (p *DownloadPool) DownloadFile(config, output string) error {
 	// 1. Construct lattice
-	lattice := e.NewLattice(e.Alpha, e.S, e.P, config, p.Datarequests)
+	lattice := e.NewLatticeWithFailure(e.Alpha, e.S, e.P, config, p.Datarequests, 15)
 	p.lattice = lattice
 
 	// 2. Attempt to download Data Blocks
@@ -188,8 +185,8 @@ repairs:
 					go p.DownloadBlock(dl, lattice.DataStream)
 				} else {
 					//go p.DownloadBlock(dl, lattice.DataStream)
-					//go lattice.HierarchicalRepair(dl, lattice.DataStream, make([]*e.Block, 0))
-					go lattice.RoundrobinRepair(dl, lattice.DataStream, make([]*e.Block, 0))
+					go lattice.HierarchicalRepair(dl, lattice.DataStream, make([]*e.Block, 0))
+					//go lattice.RoundrobinRepair(dl, lattice.DataStream, make([]*e.Block, 0))
 				}
 				//go p.DownloadBlock(dl, lattice.DataStream)
 			} else {
@@ -213,12 +210,18 @@ repairs:
 					if complete { //lattice.MissingDataBlocks == 0 {
 						e.DebugPrint("Received all data blocks. Position: %d\n", dl.Position)
 						for i := 0; i < len(lattice.Blocks); i++ {
-							if lattice.Blocks[i].HasData() && lattice.Blocks[i].WasDownloaded {
-								if lattice.Blocks[i].IsParity {
-									parityblocks++
-								} else {
-									datablocks++
+							b := lattice.Blocks[i]
+							if b.HasData() {
+								if b.WasDownloaded {
+									if b.IsParity {
+										parityblocks++
+									} else {
+										datablocks++
+									}
 								}
+								fmt.Printf("%t,%d,%d,%d,%t,%d,%d,%t\n", b.IsParity, b.Position,
+									b.LeftPos(0), b.RightPos(0), b.HasData(), b.StartTime,
+									b.EndTime, b.WasDownloaded)
 							}
 						}
 						break repairs

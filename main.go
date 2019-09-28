@@ -119,7 +119,7 @@ func main() {
 	//setupRoutes()
 
 	//downloadSingleFile("6706e8391baa50938420e475006617ccc3fa60794a1b3121f3d56c5cb4e67485")
-	//upload("/home/gob/Desktop/Ålgård_Station.jpg", "AlgardStasjon.jpg")
+	//upload("/Users/racin/go/src/github.com/racin/HackathonMadrid_Entanglement/temp/AlgardStasjon_low.jpg", "AlgardStasjon_low.jpg")
 	//uploadLarge()
 }
 
