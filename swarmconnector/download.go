@@ -85,6 +85,8 @@ func (p *DownloadPool) DownloadBlock(block *e.Block, result chan *e.Block) {
 			len(block.Right) > 0 && len(block.Right[0].Right) > 0) {
 		e.DebugPrint("UNAVAILABLE BLOCK %v\n", block.String())
 		e.DebugPrint("Len left: %v, Len right: %v\n", len(block.Left[0].Left), len(block.Right[0].Right))
+		fmt.Println("unexpected HTTP status: 404 Not Found")
+		fmt.Printf("%t,%d,%d,%d,%t,%d,%d,%t\n", block.IsParity, block.Position, block.LeftPos(0), block.RightPos(0), block.HasData(), time.Now().UnixNano(), time.Now().UnixNano(), false)
 		result <- block
 		return
 	}
@@ -93,6 +95,8 @@ func (p *DownloadPool) DownloadBlock(block *e.Block, result chan *e.Block) {
 			for i := 0; i < len(unAvailableParity[block.Left[0].Position]); i++ {
 				if unAvailableParity[block.Left[0].Position][i] == block.Right[0].Position {
 					e.DebugPrint("UNAVAILABLE PARITY BLOCK %v\n", block.String())
+					fmt.Println("unexpected HTTP status: 404 Not Found")
+					fmt.Printf("%t,%d,%d,%d,%t,%d,%d,%t\n", block.IsParity, block.Position, block.LeftPos(0), block.RightPos(0), block.HasData(), time.Now().UnixNano(), time.Now().UnixNano(), false)
 					result <- block
 					return
 				}
@@ -133,6 +137,7 @@ func (p *DownloadPool) DownloadBlock(block *e.Block, result chan *e.Block) {
 			}
 		} else {
 			fmt.Println(err.Error())
+			fmt.Printf("%t,%d,%d,%d,%t,%d,%d,%t\n", block.IsParity, block.Position, block.LeftPos(0), block.RightPos(0), block.HasData(), start, time.Now().UnixNano(), false)
 		}
 
 		p.release(dl)
@@ -174,6 +179,7 @@ repairs:
 		select {
 		case dl := <-lattice.DataStream:
 			if dl == nil {
+				// TODO: Print stack trace.
 				fmt.Println("FATAL ERROR. STOPPING DOWNLOAD.")
 				// Try new strategy?
 				os.Exit(0)

@@ -48,7 +48,7 @@ func DebugPrint(format string, a ...interface{}) (int, error) {
 	if ok && z == "" {
 		return 0, nil
 	}
-	if true {
+	if false {
 		return fmt.Printf(format, a...)
 	}
 	return 0, nil
