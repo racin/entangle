@@ -138,12 +138,45 @@ func NewLattice(alpha, s, p int, confpath string, datarequest chan *DownloadRequ
 	//datablocks := make(map[string]*Block, len(dataKeys))
 	//datablocks := make([]*Block, len(dataKeys))
 
-	blocks = createDataBlocks(conf, dataKeys, blocks, alpha, 5)
+	blocks = createDataBlocks(conf, dataKeys, blocks, alpha, 0)
 	//copy(datablocks, blocks) // Blocks should be sorted already.
 
-	blocks = createParities(conf, hpKeys, blocks, Horizontal, 5)
-	blocks = createParities(conf, rpKeys, blocks, Right, 5)
-	blocks = createParities(conf, lpKeys, blocks, Left, 5)
+	blocks = createParities(conf, hpKeys, blocks, Horizontal, 0)
+	blocks = createParities(conf, rpKeys, blocks, Right, 0)
+	blocks = createParities(conf, lpKeys, blocks, Left, 0)
+
+	return &Lattice{
+		// DataNodes:   make([]*DataBlock, esize),
+		// ParityNodes: make([]*ParityBlock, alpha*esize),
+		NumDataBlocks:     len(dataKeys),
+		MissingDataBlocks: len(dataKeys),
+		Blocks:            blocks,
+		Alpha:             alpha,
+		S:                 s,
+		P:                 p,
+		confpath:          confpath,
+		DataStream:        make(chan *Block, len(conf)*5),
+		MaxChunkSize:      MaxSizeChunk,
+		DataRequest:       datarequest,
+		//Config:   conf,
+	}
+}
+
+func NewLatticeWithFailure(alpha, s, p int, confpath string, datarequest chan *DownloadRequest, failrate int) *Lattice {
+	//numBlocks := (1 + alpha) * esize
+	conf, _ := LoadFileStructure(confpath)
+	dataKeys, hpKeys, rpKeys, lpKeys := sortConfigKeys(reflect.ValueOf(conf).MapKeys(), alpha, s, p)
+	blocks := make([]*Block, 0, len(conf))
+	rand.Seed(time.Now().UnixNano())
+	//datablocks := make(map[string]*Block, len(dataKeys))
+	//datablocks := make([]*Block, len(dataKeys))
+
+	blocks = createDataBlocks(conf, dataKeys, blocks, alpha, failrate)
+	//copy(datablocks, blocks) // Blocks should be sorted already.
+
+	blocks = createParities(conf, hpKeys, blocks, Horizontal, failrate)
+	blocks = createParities(conf, rpKeys, blocks, Right, failrate)
+	blocks = createParities(conf, lpKeys, blocks, Left, failrate)
 
 	return &Lattice{
 		// DataNodes:   make([]*DataBlock, esize),
