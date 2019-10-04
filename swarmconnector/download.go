@@ -327,16 +327,6 @@ func StringConvertBlockIndex(index ...int) string {
 	}
 }
 
-// func (d *Downloader) CanReconstruct(content *map[string][]byte, dataIndex string) {
-// 	br, bh, bl := e.GetBackwardNeighbours(dataIndex) // Right, Horizontal, Left
-// 	fr, fh, fl := e.GetForwardNeighbours(dataIndex)
-
-// 	return (*content)[dataIndex] != nil ||
-// 		((*content)[br] != nil && (*content)[fr] != nil) ||
-// 		((*content)[bh] != nil && (*content)[fh] != nil) ||
-// 		((*content)[bl] != nil && (*content)[fl] != nil)
-// }
-
 func DownloadAndReconstruct(filePath string, dataIndexes ...bool) (string, error) {
 	client := bzzclient.NewClient("https://swarm-gateways.net")
 	config, _ := LoadFileStructure("../retrives.txt")
