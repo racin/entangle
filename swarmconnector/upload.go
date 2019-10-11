@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
 	//bzzclient "https://github.com/ethereum/go-ethereum/tree/master/swarm/api/client/client.go"
 	bzzclient "github.com/ethereum/go-ethereum/swarm/api/client"
 )
@@ -17,6 +18,7 @@ type FileStructure map[string]string
 
 const UploadDirectory = "files/"
 
+// TODO: SF
 func UploadAllChunks() {
 	//define Swarm client
 	//Create file retrieval log info
